@@ -35,24 +35,6 @@ The outputs are under the `target` directory.
 
 Alternatively, just import the project using your IDE. [IntelliJ](http://www.jetbrains.com/idea/download/) has Maven integration built-in and has a free Community Edition. Simply use `File | Import Project` and locate the `pom.xml` in the root of the cloned project source tree.
 
-### Example applications
-
-These are found in the `examples` module.
-
-#### Forwarding service
-
-This will download the block chain and eventually print a Bitcoin address that it has generated.
-
-If you send coins to that address, it will forward them on to the address you specified.
-
-```
-  cd examples
-  mvn exec:java -Dexec.mainClass=org.bitcoinj.examples.ForwardingService -Dexec.args="<insert a bitcoin address here>"
-```
-
-Note that this example app *does not use checkpointing*, so the initial chain sync will be pretty slow. You can make an app that starts up and does the initial sync much faster by including a checkpoints file; see the documentation for
-more info on this technique.
-
 ### Where next?
 
 Now you are ready to [follow the tutorial](https://bitcoinj.github.io/getting-started).
