@@ -31,7 +31,6 @@ import java.nio.ByteBuffer;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.StoredUndoableBlock;
@@ -41,6 +40,7 @@ import org.bitcoinj.core.UTXO;
 import org.bitcoinj.core.UTXOProviderException;
 import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptException;
 import org.iq80.leveldb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
  * <p>
  * An implementation of a Fully Pruned Block Store using a leveldb implementation as the backing data store.
  * <p>
- * 
+ *
  * <p>
  * Includes number of caches to optimise the initial blockchain download.
  * </p>

@@ -18,6 +18,7 @@
 package org.bitcoinj.core;
 
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.wallet.DefaultRiskAnalysis;
 import org.bitcoinj.wallet.KeyBag;
 import org.bitcoinj.wallet.RedeemData;
@@ -40,7 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * can be claimed by the recipient in the input of another transaction. You can imagine a
  * transaction as being a module which is wired up to others, the inputs of one have to be wired
  * to the outputs of another. The exceptions are coinbase transactions, which create new coins.</p>
- * 
+ *
  * <p>Instances of this class are not safe for use by multiple threads.</p>
  */
 public class TransactionInput extends ChildMessage {
@@ -213,7 +214,7 @@ public class TransactionInput extends ChildMessage {
     }
 
     /**
-     * @return The previous output transaction reference, as an OutPoint structure.  This contains the 
+     * @return The previous output transaction reference, as an OutPoint structure.  This contains the
      * data needed to connect to the output of the transaction we're gathering coins from.
      */
     public TransactionOutPoint getOutpoint() {
