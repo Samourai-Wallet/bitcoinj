@@ -1,6 +1,6 @@
 /*
  * Copyright by the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -235,9 +235,12 @@ public class MarriedKeyChain extends DeterministicKeyChain {
 
     @Override
     protected void formatAddresses(boolean includePrivateKeys, NetworkParameters params, StringBuilder builder2) {
-        for (DeterministicKeyChain followingChain : followingKeyChains)
-            builder2.append("Following chain:  ").append(followingChain.getWatchingKey().serializePubB58(params))
-                    .append('\n');
+        for (DeterministicKeyChain followingChain : followingKeyChains) {
+        builder2.append("Following chain:  ").append(followingChain.getWatchingKey().serializePubB58(params, false))
+                .append('\n');
+        builder2.append("Following chain:  ").append(followingChain.getWatchingKey().serializePubB58(params, true))
+                .append('\n');
+        }
         builder2.append('\n');
         for (RedeemData redeemData : marriedKeysRedeemData.values())
             formatScript(ScriptBuilder.createP2SHOutputScript(redeemData.redeemScript), builder2, params);

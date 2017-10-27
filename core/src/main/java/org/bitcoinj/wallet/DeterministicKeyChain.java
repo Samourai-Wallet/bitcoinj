@@ -1,6 +1,6 @@
 /*
  * Copyright by the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -92,7 +92,7 @@ import static com.google.common.collect.Lists.newLinkedList;
  * keys, you can request 33 keys before more keys will be calculated and the Bloom filter rebuilt and rebroadcast.
  * But even when you are requesting the 33rd key, you will still be looking 100 keys ahead.
  * </p>
- * 
+ *
  * @author Andreas Schildbach
  */
 @SuppressWarnings("PublicStaticCollectionField")
@@ -1328,7 +1328,8 @@ public class DeterministicKeyChain implements EncryptableKeyChain {
             builder.append("Key birthday:  ").append(watchingKey.getCreationTimeSeconds()).append("  [")
                     .append(Utils.dateTimeFormat(watchingKey.getCreationTimeSeconds() * 1000)).append("]\n");
         }
-        builder.append("Key to watch:  ").append(watchingKey.serializePubB58(params)).append('\n');
+        builder.append("Key to watch:  ").append(watchingKey.serializePubB58(params, false)).append('\n');
+        builder.append("Key to watch:  ").append(watchingKey.serializePubB58(params, true)).append('\n');
         formatAddresses(includePrivateKeys, params, builder);
         return builder.toString();
     }

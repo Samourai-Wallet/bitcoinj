@@ -68,6 +68,10 @@ public class TestNet3Params extends AbstractBitcoinNetParams {
         addrSeeds = null;
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
+        bip49HeaderPub = 0x044A5262;
+        bip49HeaderPriv = 0x044A4E28;
+        bip141HeaderPub = 0x045F1CF6;
+        bip141HeaderPriv = 0x045F18BC;
 
         majorityEnforceBlockUpgrade = TestNet2Params.TESTNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = TestNet2Params.TESTNET_MAJORITY_REJECT_BLOCK_OUTDATED;
