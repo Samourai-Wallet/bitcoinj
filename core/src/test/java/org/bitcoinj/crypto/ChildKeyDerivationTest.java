@@ -25,6 +25,9 @@ import org.bouncycastle.crypto.params.*;
 import static org.bitcoinj.core.Utils.*;
 import static org.junit.Assert.*;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * This test is adapted from Armory's BIP 32 tests.
  */
@@ -198,6 +201,39 @@ public class ChildKeyDerivationTest {
         priv58 = key1.serializePrivB58(params);
         assertEquals("tpubD6NzVbkrYhZ4WuxgZMdpw1Hvi7MKg6YDjDMXVohmZCFfF17hXBPYpc56rCY1KXFMovN29ik37nZimQseiykRTBTJTZJmjENyv2k3R12BJ1M", pub58);
         assertEquals("tprv8ZgxMBicQKsPdSvtfhyEXbdp95qPWmMK9ukkDHfU8vTGQWrvtnZxe7TEg48Ui7HMsZKMj7CcQRg8YF1ydtFPZBxha5oLa3qeN3iwpYhHPVZ", priv58);
+
+        // BIP49
+        {
+        List<String> words = new ArrayList<String>();
+        words.add("dwarf");
+        words.add("cheese");
+        words.add("material");
+        words.add("blind");
+        words.add("rain");
+        words.add("elder");
+        words.add("train");
+        words.add("tribe");
+        words.add("deposit");
+        words.add("exist");
+        words.add("better");
+        words.add("organ");
+        byte[] hd_seed = MnemonicCode.toSeed(words, "test");
+        key1 = HDKeyDerivation.createMasterPrivateKey(hd_seed);
+        DeterministicKey key2 = HDKeyDerivation.deriveChildKey(key1, 49|ChildNumber.HARDENED_BIT);
+        DeterministicKey key3 = HDKeyDerivation.deriveChildKey(key2, ChildNumber.HARDENED_BIT);
+        int childnum = 0|ChildNumber.HARDENED_BIT;
+        DeterministicKey aKey = HDKeyDerivation.deriveChildKey(key3, childnum);
+        params = MainNetParams.get();
+        pub58 = aKey.serializePubB58(params, true);
+        priv58 = aKey.serializePrivB58(params, true);
+        assertEquals("ypub6WoG7B3T2iNt3gcVb8QEDZwpYwetWWBVBeJP5p1SoGy39Cp37TdvBTMCbjq2tURJR1G5A45VxbP6pCR9qrkD62KTKcshjo4AjJQMuKzXxbi", pub58);
+        assertEquals("yprvAHouhfWZCLpaqCY2V6sDrS15zupQ73TdpRNnHRbqEwS4GQUtZvKfdf2ikVWTfWnsLYUX6WYXiA7yk1akiQkL7Rr1aBx4S4r7RnZ7XgmRqSZ", priv58);
+        params = TestNet3Params.get();
+        pub58 = aKey.serializePubB58(params, true);
+        priv58 = aKey.serializePrivB58(params, true);
+        assertEquals("upub5DUCtWMnRzCxeVr2FhFjPDZos556k2DVXCDVxERuHFTWvoZ86pyfhCieWuzgtqocnSnrA9hG7wxuH3xty569u5b3rG61Q9nDeQ9nM42hj5v", pub58);
+        assertEquals("uprv8zUrUzptbcefS1mZ9fij25d5K3EcLZVe9yHu9r2HiuvY41DyZHfR9QQAffg7ftBBhz1J6cAHsWhnCs8Vqd6GvV7c6qAN6RaALtJXyNr5kLL", priv58);
+      }
     }
 
     @Test
