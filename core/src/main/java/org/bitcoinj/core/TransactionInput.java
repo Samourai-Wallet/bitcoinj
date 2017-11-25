@@ -239,7 +239,7 @@ public class TransactionInput extends ChildMessage {
     /**
      * @param scriptBytes the scriptBytes to set
      */
-    void setScriptBytes(byte[] scriptBytes) {
+    public void setScriptBytes(byte[] scriptBytes) {
         unCache();
         this.scriptSig = null;
         int oldLength = length;
