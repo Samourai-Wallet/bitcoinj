@@ -461,22 +461,29 @@ public class DeterministicKey extends ECKey {
         return key;
     }
 
-    public byte[] serializePublic(NetworkParameters params, boolean bip49) {
-        return serialize(params, true, bip49);
+    public byte[] serializePublic(NetworkParameters params, int purpose) {
+        return serialize(params, true, purpose);
     }
 
-    public byte[] serializePrivate(NetworkParameters params, boolean bip49) {
-        return serialize(params, false, bip49);
+    public byte[] serializePrivate(NetworkParameters params, int purpose) {
+        return serialize(params, false, purpose);
     }
 
-    private byte[] serialize(NetworkParameters params, boolean pub, boolean bip49) {
+    private byte[] serialize(NetworkParameters params, boolean pub, int purpose) {
         ByteBuffer ser = ByteBuffer.allocate(78);
-        if(bip49)  {
-          ser.putInt(pub ? params.getBip49HeaderPub() : params.getBip49HeaderPriv());
+        switch(purpose)  {
+          case 49:
+            ser.putInt(pub ? params.getBip49HeaderPub() : params.getBip49HeaderPriv());
+            break;
+          case 84:
+            ser.putInt(pub ? params.getBip84HeaderPub() : params.getBip84HeaderPriv());
+            break;
+          // assume purpose == 44
+          default:
+            ser.putInt(pub ? params.getBip32HeaderPub() : params.getBip32HeaderPriv());
+            break;
         }
-        else  {
-          ser.putInt(pub ? params.getBip32HeaderPub() : params.getBip32HeaderPriv());
-        }
+
         ser.put((byte) getDepth());
         ser.putInt(getParentFingerprint());
         ser.putInt(getChildNumber().i());
@@ -487,19 +494,19 @@ public class DeterministicKey extends ECKey {
     }
 
     public String serializePubB58(NetworkParameters params) {
-        return toBase58(serialize(params, true, false));
+        return toBase58(serialize(params, true, 44));
     }
 
     public String serializePrivB58(NetworkParameters params) {
-        return toBase58(serialize(params, false, false));
+        return toBase58(serialize(params, false, 44));
     }
 
-    public String serializePubB58(NetworkParameters params, boolean bip49) {
-        return toBase58(serialize(params, true, bip49));
+    public String serializePubB58(NetworkParameters params, int purpose) {
+        return toBase58(serialize(params, true, purpose));
     }
 
-    public String serializePrivB58(NetworkParameters params, boolean bip49) {
-        return toBase58(serialize(params, false, bip49));
+    public String serializePrivB58(NetworkParameters params, int purpose) {
+        return toBase58(serialize(params, false, purpose));
     }
 
     static String toBase58(byte[] ser) {

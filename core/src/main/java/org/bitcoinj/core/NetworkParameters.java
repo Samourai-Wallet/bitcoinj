@@ -92,8 +92,8 @@ public abstract class NetworkParameters {
     protected int bip32HeaderPriv;
     protected int bip49HeaderPub;
     protected int bip49HeaderPriv;
-    protected int bip141HeaderPub;
-    protected int bip141HeaderPriv;
+    protected int bip84HeaderPub;
+    protected int bip84HeaderPriv;
 
     /** Used to check majorities for block version upgrade */
     protected int majorityEnforceBlockUpgrade;
@@ -418,6 +418,16 @@ public abstract class NetworkParameters {
     /** Returns the 4 byte header for BIP49 (HD) wallet - private key part. */
     public int getBip49HeaderPriv() {
         return bip49HeaderPriv;
+    }
+
+    /** Returns the 4 byte header for BIP84 (HD) wallet - public key part. */
+    public int getBip84HeaderPub() {
+        return bip84HeaderPub;
+    }
+
+    /** Returns the 4 byte header for BIP84 (HD) wallet - private key part. */
+    public int getBip84HeaderPriv() {
+        return bip84HeaderPriv;
     }
 
     /**
