@@ -189,6 +189,11 @@ public class Transaction extends ChildMessage {
     @Nullable
     private String memo;
 
+    /**
+     * Segwit makes sigop limit four times higher and scales regular sigops by four.
+     */
+    public static final int WITNESS_SCALE_FACTOR = 4;
+
     public Transaction(NetworkParameters params) {
         super(params);
         version = 1;
@@ -1688,4 +1693,40 @@ public class Transaction extends ChildMessage {
     public void setMemo(String memo) {
         this.memo = memo;
     }
+
+    /**
+       * Transaction weight is a segwit-related computation 3b+t where b is the size of a transaction serialized in the
+       * traditional manner without witness data, and t is the size of a transaction serialized in the segwit format
+       * with witness data.
+       */
+      public int getWeight() {
+          final int baseLength;
+          {
+              final ByteArrayOutputStream base = new UnsafeByteArrayOutputStream(length < 32 ? 32 : length + 32);
+              try {
+                  bitcoinSerializeToStream(base, TransactionOptions.NONE);
+              } catch (IOException e) {
+                  ; // Cannot happen, we are serializing to a memory stream
+              }
+              baseLength = base.size();
+          }
+
+          final int totalLength;
+          {
+              final ByteArrayOutputStream total = new UnsafeByteArrayOutputStream(length < 32 ? 32 : length + 32);
+              try {
+                  bitcoinSerializeToStream(total, TransactionOptions.WITNESS);
+              } catch (IOException e) {
+                ; // Cannot happen, we are serializing to a memory stream
+              }
+              totalLength = total.size();
+          }
+
+          return baseLength * (WITNESS_SCALE_FACTOR - 1) + totalLength;
+      }
+
+      public int getVirtualTransactionSize() {
+          return (getWeight() + WITNESS_SCALE_FACTOR - 1) / WITNESS_SCALE_FACTOR;
+      }
+
 }
