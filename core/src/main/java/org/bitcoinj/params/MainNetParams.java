@@ -47,6 +47,10 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         packetMagic = 0xf9beb4d9L;
         bip32HeaderPub = 0x0488B21E; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ADE4; //The 4 byte header that serializes in base58 to "xprv"
+        bip49HeaderPub = 0x049D7CB2; //The 4 byte header that serializes in base58 to "ypub".
+        bip49HeaderPriv = 0x049D7878; //The 4 byte header that serializes in base58 to "yprv"
+        bip84HeaderPub = 0x04B24746; //The 4 byte header that serializes in base58 to "zpub".
+        bip84HeaderPriv = 0x04B2430C; //The 4 byte header that serializes in base58 to "zprv"
 
         majorityEnforceBlockUpgrade = MAINNET_MAJORITY_ENFORCE_BLOCK_UPGRADE;
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;

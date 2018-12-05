@@ -165,7 +165,7 @@ public class DeterministicKey extends ECKey {
         this.parentFingerprint = ascertainParentFingerprint(parent, parentFingerprint);
     }
 
-    
+
     /** Clones the key */
     public DeterministicKey(DeterministicKey keyToClone, DeterministicKey newParent) {
         super(keyToClone.priv, keyToClone.pub.get());
@@ -461,17 +461,29 @@ public class DeterministicKey extends ECKey {
         return key;
     }
 
-    public byte[] serializePublic(NetworkParameters params) {
-        return serialize(params, true);
+    public byte[] serializePublic(NetworkParameters params, int purpose) {
+        return serialize(params, true, purpose);
     }
 
-    public byte[] serializePrivate(NetworkParameters params) {
-        return serialize(params, false);
+    public byte[] serializePrivate(NetworkParameters params, int purpose) {
+        return serialize(params, false, purpose);
     }
 
-    private byte[] serialize(NetworkParameters params, boolean pub) {
+    private byte[] serialize(NetworkParameters params, boolean pub, int purpose) {
         ByteBuffer ser = ByteBuffer.allocate(78);
-        ser.putInt(pub ? params.getBip32HeaderPub() : params.getBip32HeaderPriv());
+        switch(purpose)  {
+          case 49:
+            ser.putInt(pub ? params.getBip49HeaderPub() : params.getBip49HeaderPriv());
+            break;
+          case 84:
+            ser.putInt(pub ? params.getBip84HeaderPub() : params.getBip84HeaderPriv());
+            break;
+          // assume purpose == 44
+          default:
+            ser.putInt(pub ? params.getBip32HeaderPub() : params.getBip32HeaderPriv());
+            break;
+        }
+
         ser.put((byte) getDepth());
         ser.putInt(getParentFingerprint());
         ser.putInt(getChildNumber().i());
@@ -482,11 +494,19 @@ public class DeterministicKey extends ECKey {
     }
 
     public String serializePubB58(NetworkParameters params) {
-        return toBase58(serialize(params, true));
+        return toBase58(serialize(params, true, 44));
     }
 
     public String serializePrivB58(NetworkParameters params) {
-        return toBase58(serialize(params, false));
+        return toBase58(serialize(params, false, 44));
+    }
+
+    public String serializePubB58(NetworkParameters params, int purpose) {
+        return toBase58(serialize(params, true, purpose));
+    }
+
+    public String serializePrivB58(NetworkParameters params, int purpose) {
+        return toBase58(serialize(params, false, purpose));
     }
 
     static String toBase58(byte[] ser) {
@@ -521,9 +541,9 @@ public class DeterministicKey extends ECKey {
     public static DeterministicKey deserialize(NetworkParameters params, byte[] serializedKey, @Nullable DeterministicKey parent) {
         ByteBuffer buffer = ByteBuffer.wrap(serializedKey);
         int header = buffer.getInt();
-        if (header != params.getBip32HeaderPriv() && header != params.getBip32HeaderPub())
+        if (header != params.getBip32HeaderPriv() && header != params.getBip32HeaderPub() && header != params.getBip49HeaderPriv() && header != params.getBip49HeaderPub())
             throw new IllegalArgumentException("Unknown header bytes: " + toBase58(serializedKey).substring(0, 4));
-        boolean pub = header == params.getBip32HeaderPub();
+        boolean pub = (header == params.getBip32HeaderPub() || header == params.getBip49HeaderPub());
         int depth = buffer.get() & 0xFF; // convert signed byte to positive int since depth cannot be negative
         final int parentFingerprint = buffer.getInt();
         final int i = buffer.getInt();

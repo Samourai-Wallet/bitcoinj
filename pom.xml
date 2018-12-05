@@ -21,7 +21,7 @@
 
   <groupId>org.bitcoinj</groupId>
   <artifactId>bitcoinj-parent</artifactId>
-  <version>0.15-Segwit-Samourai-001</version>
+  <version>0.15-Segwit-Samourai-004</version>
   <packaging>pom</packaging>
 
   <modules>

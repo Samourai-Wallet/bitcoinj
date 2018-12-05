@@ -90,6 +90,10 @@ public abstract class NetworkParameters {
     protected byte[] alertSigningKey;
     protected int bip32HeaderPub;
     protected int bip32HeaderPriv;
+    protected int bip49HeaderPub;
+    protected int bip49HeaderPriv;
+    protected int bip84HeaderPub;
+    protected int bip84HeaderPriv;
 
     /** Used to check majorities for block version upgrade */
     protected int majorityEnforceBlockUpgrade;
@@ -107,7 +111,7 @@ public abstract class NetworkParameters {
      */
     protected int spendableCoinbaseDepth;
     protected int subsidyDecreaseBlockCount;
-    
+
     protected int[] acceptableAddressCodes;
     protected String[] dnsSeeds;
     protected int[] addrSeeds;
@@ -146,7 +150,7 @@ public abstract class NetworkParameters {
     public static final int TARGET_TIMESPAN = 14 * 24 * 60 * 60;  // 2 weeks per difficulty cycle, on average.
     public static final int TARGET_SPACING = 10 * 60;  // 10 minutes per block.
     public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;
-    
+
     /**
      * Blocks with a timestamp after this should enforce BIP 16, aka "Pay to script hash". This BIP changed the
      * network rules in a soft-forking manner, that is, blocks that don't follow the rules are accepted but not
@@ -406,6 +410,26 @@ public abstract class NetworkParameters {
         return bip32HeaderPriv;
     }
 
+    /** Returns the 4 byte header for BIP49 (HD) wallet - public key part. */
+    public int getBip49HeaderPub() {
+        return bip49HeaderPub;
+    }
+
+    /** Returns the 4 byte header for BIP49 (HD) wallet - private key part. */
+    public int getBip49HeaderPriv() {
+        return bip49HeaderPriv;
+    }
+
+    /** Returns the 4 byte header for BIP84 (HD) wallet - public key part. */
+    public int getBip84HeaderPub() {
+        return bip84HeaderPub;
+    }
+
+    /** Returns the 4 byte header for BIP84 (HD) wallet - private key part. */
+    public int getBip84HeaderPriv() {
+        return bip84HeaderPriv;
+    }
+
     /**
      * Returns the number of coins that will be produced in total, on this
      * network. Where not applicable, a very large number of coins is returned
@@ -438,7 +462,7 @@ public abstract class NetworkParameters {
 
     /**
      * Return the default serializer for this network. This is a shared serializer.
-     * @return 
+     * @return
      */
     public final MessageSerializer getDefaultSerializer() {
         // Construct a default serializer if we don't have one
@@ -493,7 +517,7 @@ public abstract class NetworkParameters {
      * The flags indicating which block validation tests should be applied to
      * the given block. Enables support for alternative blockchains which enable
      * tests based on different criteria.
-     * 
+     *
      * @param block block to determine flags for.
      * @param height height of the block, if known, null otherwise. Returned
      * tests should be a safe subset if block height is unknown.

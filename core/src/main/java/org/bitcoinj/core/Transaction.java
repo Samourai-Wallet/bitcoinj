@@ -21,6 +21,7 @@ import org.bitcoinj.core.TransactionConfidence.ConfidenceType;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.signers.TransactionSigner;
 import org.bitcoinj.utils.ExchangeRate;
@@ -56,7 +57,7 @@ import java.math.BigInteger;
  * Whether to trust a transaction is something that needs to be decided on a case by case basis - a rule that makes
  * sense for selling MP3s might not make sense for selling cars, or accepting payments from a family member. If you
  * are building a wallet, how to present confidence to your users is something to consider carefully.</p>
- * 
+ *
  * <p>Instances of this class are not safe for use by multiple threads.</p>
  */
 public class Transaction extends ChildMessage {
@@ -187,6 +188,11 @@ public class Transaction extends ChildMessage {
      */
     @Nullable
     private String memo;
+
+    /**
+     * Segwit makes sigop limit four times higher and scales regular sigops by four.
+     */
+    public static final int WITNESS_SCALE_FACTOR = 4;
 
     public Transaction(NetworkParameters params) {
         super(params);
@@ -1687,4 +1693,40 @@ public class Transaction extends ChildMessage {
     public void setMemo(String memo) {
         this.memo = memo;
     }
+
+    /**
+       * Transaction weight is a segwit-related computation 3b+t where b is the size of a transaction serialized in the
+       * traditional manner without witness data, and t is the size of a transaction serialized in the segwit format
+       * with witness data.
+       */
+      public int getWeight() {
+          final int baseLength;
+          {
+              final ByteArrayOutputStream base = new UnsafeByteArrayOutputStream(length < 32 ? 32 : length + 32);
+              try {
+                  bitcoinSerializeToStream(base, TransactionOptions.NONE);
+              } catch (IOException e) {
+                  ; // Cannot happen, we are serializing to a memory stream
+              }
+              baseLength = base.size();
+          }
+
+          final int totalLength;
+          {
+              final ByteArrayOutputStream total = new UnsafeByteArrayOutputStream(length < 32 ? 32 : length + 32);
+              try {
+                  bitcoinSerializeToStream(total, TransactionOptions.WITNESS);
+              } catch (IOException e) {
+                ; // Cannot happen, we are serializing to a memory stream
+              }
+              totalLength = total.size();
+          }
+
+          return baseLength * (WITNESS_SCALE_FACTOR - 1) + totalLength;
+      }
+
+      public int getVirtualTransactionSize() {
+          return (getWeight() + WITNESS_SCALE_FACTOR - 1) / WITNESS_SCALE_FACTOR;
+      }
+
 }
